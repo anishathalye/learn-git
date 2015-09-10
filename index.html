@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Learn Git</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Montserrat);
+      @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700,400italic);
+
+      body { font-family: 'Lato'; }
+      h1, h2, h3 {
+        font-family: 'Montserrat';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Source Code Pro'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Learn Git
+
+## HackMIT 2015
+
+### Anish Athalye
+
+---
+
+# Agenda
+
+1. Why use a version control system
+
+2. Why Git
+
+3. Teaching philosophy
+
+4. Repository model
+
+5. Using git (the command-line tool)
+
+6. Beyond the basics
+
+7. Resources
+
+8. Questions / Workshop
+
+<br>
+
+If you have questions, feel free to interrupt me at any time!
+
+Slides available online at https://go.hackmit.org/git
+
+???
+
+* If you have a question, there are probably others who have the same question
+as you
+
+* If the presentation is going too fast or slow, tell me
+
+---
+
+# Prereqs
+
+* Know Unix command line basics
+    * Using a shell, `ls`, `cd`, etc.
+
+* Check if you have Git installed
+    * Run `git --version`
+
+* Download using a package manager (Homebrew, APT, etc.)
+    * Or get it from https://git-scm.com/download
+    * Windows users: installer also gives you Git BASH
+
+???
+
+* If you don't have it installed, download it now
+
+---
+
+# Why use a version control system (VCS)?
+
+* Keep track of changes in code
+
+* Enable good local workflows
+
+* Enable collaboration
+
+---
+
+# Keeping version history without a VCS
+
+.center[
+    ![](manual-vcs-history.png)
+]
+
+???
+
+* Keep history with copies of project directory
+
+* How many people have done this before?
+
+---
+
+# Branching without a VCS
+
+.center[
+    ![](manual-vcs-branching.png)
+]
+
+???
+
+* Make branches with copies of project directory
+
+* How many people have done this before?
+
+---
+
+# Collaborating without a VCS
+
+.center[
+    ![](manual-vcs-collaborating.png)
+]
+
+???
+
+* Collaborate by sending email attachments
+    * Most painful
+
+* How many people have done this before?
+
+---
+
+# Why Git?
+
+* Popular
+    * Used for Linux kernel, Android, Bootstrap, Angular.js, D3, Meteor, Rails,
+    React, ...
+
+* Fast, simple, and robust
+
+* Distributed
+
+* Enables non-linear workflows
+
+* GitHub
+    * Social coding site
+    * Lots of popular projects hosted here
+
+???
+
+* You're convinced that a manual workflow is painful
+    * Want a tool to make everything nicer
+
+* Git is simple and robust
+    * Designed by Linus Torvalds
+    * Simple implementation, fairly clean interface
+    * Fast
+
+* GitHub is a social coding site
+    * Super popular, lots of big projects are there, lots more are migrating
+    there
+
+* There are other version control systems
+    * Mercurial, SVN, ...
+    * You can read about the differences online, there are lots of blog posts
+    on this topic
+
+---
+
+# Teaching philosophy
+
+* Can't teach Git in an hour
+    * It's not just about using the git command-line tool, it's about learning
+    good practices and learning how to collaborate with others
+
+* Can learn the fundamentals in an hour
+    * Figure out the rest by playing around with git and reading the
+    documentation
+
+* Learn implementation before interface
+
+---
+
+# Repository model
+
+* Snapshots of state (files, directory structure)
+    * "Commit"
+    * In a way, like making a copy of the entire directory
+
+* Store how commits are related to each other
+    * Commit has "parents", revision(s) that preceded it
+    * Directed acyclic graph
+
+* References
+    * Pointers to commits
+    * Branches - mutable
+    * Tags - immutable
+
+---
+
+# Repository model
+
+.center[
+    ![](history-graph.png)
+]
+
+???
+
+* Does not track deltas like other VCSs
+
+---
+
+# Object model
+
+* Surprisingly simple
+
+* Content-addressed file system
+
+.center[
+    ![](object-model.png)
+]
+
+* Learn more: https://git-scm.com/book/en/v1/Git-Internals
+
+---
+
+# Learn Git
+
+* Follow along with the slides
+    * But this is just an introduction to some of the git subcommands
+    * You'll have time to play with Git later, and we'll be around to help you
+
+* Do all this in a new directory
+    * Don't do this with an existing project (yet)
+
+* Think about how command line operations affect the history DAG
+    * If you know what you want to do, but don't know what command to run,
+    search on Google or Stack Overflow
+
+---
+
+# Configuration
+
+* Initial setup
+
+```bash
+git config --global user.name "Alyssa P. Hacker"
+git config --global user.email hacker@hackmit.org
+```
+
+* Settings in `~/.gitconfig`
+
+* Other useful bits
+
+```bash
+git config --global ui.color auto
+git config --global alias.graph "log --graph --decorate --all"
+```
+
+* Getting help: `git help <subcommand>`
+    * Like `git help config`
+    * Run `git help` for a list for a list of commonly used commands
+
+---
+
+# Initializing a repository
+
+```bash
+git init
+```
+
+```
+Initialized empty Git repository in /src/repo/.git/
+```
+
+---
+
+# Initial commit
+
+```bash
+echo "blah" > blah.txt
+git add :/
+git status
+```
+
+```
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   blah.txt
+```
+
+```bash
+git commit -m "Initial commit"
+```
+
+```
+[master (root-commit) bdf98f2] Initial commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 blah.txt
+```
+
+???
+
+* Staging area
+
+* What does "On branch master" mean?
+
+---
+
+# Making changes
+
+```bash
+echo "more stuff" >> blah.txt
+git diff
+```
+
+```
+diff --git i/blah.txt w/blah.txt
+index 907b308..82471e8 100644
+--- i/blah.txt
++++ w/blah.txt
+@@ -1 +1,2 @@
+ blah
++more stuff
+```
+
+---
+
+```bash
+git add :/ && git commit -m "Add more stuff"
+git graph
+```
+
+```
+* commit c61e4c53da0a2c5142252d0d194d7b2cf6d0b4bd (HEAD, master)
+| Author: Anish Athalye <me@anishathalye.com>
+| Date:   Thu Sep 10 20:29:49 2015 -0400
+|
+|     Add more stuff
+|
+* commit bdf98f24631baa22063d01ad7e8bb8a7424c736a
+  Author: Anish Athalye <me@anishathalye.com>
+  Date:   Thu Sep 10 20:24:56 2015 -0400
+
+      Initial commit
+```
+
+* `git graph` is the single most important command (alias) to remember
+    * It will be super helpful in understanding what is going on
+    * Use it often
+
+???
+
+* Commit messages
+
+* Commit hashes
+
+* Branches / HEAD
+
+* Graph / parents
+
+---
+
+# Branching and Merging
+
+* Used to work on different topics concurrently (among other stuff)
+
+```bash
+git checkout -b optimization
+# do stuff, editing files and making commits
+git checkout master
+# do some work on master, editing files and making commits
+
+# when ready to merge in changes from optimization:
+git merge optimization
+```
+
+* Dealing with merge conflicts
+
+---
+
+# Remotes
+
+* Interact with other Git repositories
+
+```bash
+git remote add origin https://github.com/username/reponame
+```
+
+* Push changes
+
+```bash
+git push origin master
+```
+
+* Fetch changes
+
+```bash
+git fetch
+```
+
+* Fetch changes and merge
+
+```bash
+git pull
+```
+
+---
+
+# Cloning
+
+* Getting code from a remote
+
+```bash
+git clone https://github.com/git/git
+```
+
+???
+
+* Try it
+
+---
+
+# Organizing version history
+
+* Best way to learn how to organize version history and have good workflows?
+    * See how other people do it!
+    * https://github.com/git/git
+
+* Things can get pretty complicated - visualize as a graph!
+
+.center[
+    ![](version-history.png)
+]
+
+---
+
+# Beyond the basics
+
+* Customizing Git
+    * `~/.gitconfig`
+    * See https://go.hackmit.org/gitconfig as an example
+
+* Git status in your shell prompt
+
+* Learning `git mergetool`
+    * Nice tools for handling merge conflicts like Vimdiff
+
+* Open-source workflows
+    * Merging, rebasing, tagging
+
+* Using GitHub
+    * Issues, Pull Requests, Wiki, ...
+
+---
+
+# If something goes wrong
+
+* `git reflog`
+    * Read about it online
+
+* Google / StackOverflow
+    * Other people have probably had the same issue
+
+---
+
+# Resources
+
+* `git help <subcommand>`
+
+* https://git-scm.com/doc
+    * Awesome resource, covers everything from basics to Git internals
+    * **Highly recommended** that you read this at some point, at least
+    chapters 1-4
+
+* http://pcottle.github.io/learnGitBranching/
+    * Really cool browser-based game
+
+* https://go.hackmit.org/git
+    * These slides
+
+---
+
+# Questions / Workshop
+
+* Play with Git, ask us questions!
+    * This stuff can be pretty confusing!
+
+* Ideas
+    * Make and switch between branches
+        * Play the "Learn Git Branching" game
+    * Interact with remotes
+    * Clone code from GitHub, explore version history
+        * https://github.com/git/git
+    * Customize your `~/.gitconfig`
+    * Put git status in your shell prompt
+    * Create a GitHub account
+    * Find a bug in a project and submit a Pull Request
+
+<br>
+
+Slides at https://go.hackmit.org/git
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
